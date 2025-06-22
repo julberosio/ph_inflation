@@ -6,7 +6,7 @@ This replication package accompanies Osio, Julber (2025). "Forecasting Philippin
 
 ## Abstract in English
 
-I estimate a Bayesian two-stage model to forecast Philippine inflation over the second quarter of 2025. A dynamic factor model extracts latent macroeconomic drivers from a high-dimensional panel of monthly and quarterly variables, including a novel typhoon exposure index constructed from spatial wind field data. Inflation is modelled as a regime-switching linear function of the latent factor, with coefficients and variances that evolve according to a first-order Markov process. To improve short-term forecast accuracy, the regime model is estimated only on a post-break subsample, with the break identified endogenously based on smoothed inflation trends. Forecasts for April–June 2025 remain below 1.5%, tracking realised values where available. The model is implemented via Gibbs sampling and validated through rolling cross-validation, demonstrating strong short-horizon predictive performance.
+I estimate a Bayesian two-stage model to forecast Philippine inflation over the second quarter of 2025. A dynamic factor model extracts two latent macroeconomic drivers from a high-dimensional panel of monthly and quarterly variables, including a novel typhoon exposure index constructed from spatial wind field data. Inflation is modelled as a regime-switching linear function of these factors, with coefficients and variances that evolve according to a first-order Markov process. To improve short-term forecast accuracy, the regime model is estimated only on a post-break subsample, with the break identified endogenously based on smoothed inflation trends. Forecasts for April–June 2025 remain below 1.5\%, closely tracking realised values where available. The model is implemented via Gibbs sampling and validated through rolling cross-validation, achieving a mean absolute percentage error (MAPE) of 4.4\% for the forecast period.
 
 JEL Classification: C11, C32, E31
 Keywords: Bayesian factor model, inflation forecasting, regime switching
@@ -17,10 +17,18 @@ Keywords: Bayesian factor model, inflation forecasting, regime switching
 
 ```
 project_root/
-├── code/          # All Python scripts for estimation, forecasting, and diagnostics
-├── data_prep/     # Raw and preprocessed data files (CSV, R interpolations, etc.)
-├── output/        # All generated figures and tables (PDF format)
-└── main.py        # Orchestrates full pipeline
+├── code/                      # All Python scripts for estimation, forecasting, and diagnostics
+│   ├── main.py                # Orchestrates the full forecasting pipeline
+│   ├── data.py                # Loads and merges monthly + quarterly datasets
+│   ├── utils.py               # Transformations, plotting, forward-backward algorithm
+│   ├── select_factors.py      # Bai and Ng (2002) information criteria
+│   ├── factors.py             # Bayesian dynamic factor model (latent factors)
+│   ├── ms_regression.py       # Markov-switching inflation regression
+│   ├── forecast.py            # Forecast generation and simulation
+│   └── diagnostics.py         # Accuracy metrics and cross-validation logic
+├── data_prep/                 # Raw and preprocessed data files (CSV, R interpolations, etc.)
+├── output/                    # All generated figures and tables (PDF format)
+└── requirements.txt           # Python dependencies for reproducibility
 ```
 
 ---
@@ -65,7 +73,7 @@ See `requirements.txt`. The code runs on Python 3.8+ and uses:
 ## 🧠 Model Overview
 
 - **Stage 1: Dynamic Factor Model**
-  - Bayesian estimation of a single latent factor summarising macroeconomic indicators
+  - Bayesian estimation of latent factors summarising macroeconomic indicators
   - Factor model includes AR(1) dynamics
   - Implemented in `factors.py`
 
@@ -83,12 +91,15 @@ Running `main.py` produces:
 
 | Output File                     | Description                                |
 |--------------------------------|--------------------------------------------|
-| `forecast_plot.pdf`            | Inflation: historical, forecast, realised  |
-| `regime_probs_with_shade.pdf`  | Smoothed regime probabilities              |
 | `latent_factors.pdf`           | Estimated latent factor over time          |
+| `inflation_histogram.pdf`      | Histogram and KDE of inflation             |
+| `regime_probs_with_shade.pdf`  | Smoothed regime probabilities              |
+| `trend_break_detection.pdf`    | Inflation, trend, slope and trend break    |
+| `forecast_plot.pdf`            | Inflation: historical, forecast, realised  |
 | `cv_errors_over_time.pdf`      | Rolling RMSE and MAE across windows        |
 | `cv_error_histograms.pdf`      | Histograms of RMSE and MAE                 |
-| `inflation_histogram.pdf`      | Histogram and KDE of inflation             |
+| `cv_results.csv`               | Complete results of cross validation       |
+
 
 All outputs are stored in the `output/` directory.
 
