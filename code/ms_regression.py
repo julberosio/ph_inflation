@@ -188,6 +188,9 @@ def fit_markov_switching_regression(
     inf_smoothed = inflation.rolling(window=6, min_periods=1).mean()
     slope = inf_smoothed.diff().rolling(window=3).mean()
     trend_break = slope[slope < -0.19].last_valid_index()
+
+    # Bai-Perrod structural break
+    #trend_break = detect_recent_break(inflation, recent_cutoff="2021-01-01", penalty=10)
     # print(f"Detected trend break: {trend_break}")
 
     # Restrict to post-break data

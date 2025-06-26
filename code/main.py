@@ -24,6 +24,7 @@ np.random.seed(10)
 # 1. Load and preprocess data
 df = load_and_merge('monthly_vars.csv', 'quarterly_vars.csv')
 df = df[df.index >= '2002-01-31']
+print(df.columns) # Print columns to interpret factor loadings
 
 # 2. Visual check of inflation distribution
 plot_inflation_histogram(df)
@@ -43,6 +44,7 @@ bfm.run_gibbs(n_iter=200)
 factor_df = bfm.get_latent_factors()
 phi = bfm.get_transition_matrix()
 factor_var = bfm.factor_var
+print(bfm.lam) # Print factor loadings
 
 # 6. Fit regime-switching regression model
 post = fit_markov_switching_regression(factor_df, df['inflation'], k_regimes=2)
