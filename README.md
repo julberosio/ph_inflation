@@ -23,6 +23,7 @@ project_root/
 │   ├── utils.py               # Transformations, plotting, forward-backward algorithm
 │   ├── select_factors.py      # Bai and Ng (2002) information criteria
 │   ├── factors.py             # Bayesian dynamic factor model (latent factors)
+│   ├── regime_break.py        # Bai and Perron (2003) trend break test
 │   ├── ms_regression.py       # Markov-switching inflation regression
 │   ├── forecast.py            # Forecast generation and simulation
 │   └── diagnostics.py         # Accuracy metrics and cross-validation logic
@@ -30,6 +31,16 @@ project_root/
 ├── output/                    # All generated figures and tables (PDF format)
 └── requirements.txt           # Python dependencies for reproducibility
 ```
+
+- `main.py` orchestrates the pipeline, from data loading and transformation to model estimation,
+forecasting, plotting, and evaluation. It also runs the rolling cross-validation.
+- `data.py` loads and merges monthly and quarterly datasets, aligns them at month-end frequency, and interpolates unemployment using the Denton method.
+- `utils.py` contains reusable utilities for transforming variables, plotting figures (e.g., latentfactors, regime probabilities), debugging forecasts, and sampling regime paths using the forward–backward algorithm.
+- `select_factors.py` implements the Bai and Ng (2002) information criteria to select the optimal number of latent factors using ICp1, ICp2, and ICp3.
+- `factors.py` estimates the Bayesian dynamic factor model, with latent factors evolving as AR(1) processes. Gibbs sampling draws the factor loadings, transition matrix, and latent factors under a stationarity constraint.
+- `regime_break.py` implements the structural trend break test of Bai and Perron (2003) on inflation.
+- `ms_regression.p`y detects the endogenous trend break in inflation using a smoothed slope rule and estimates the post-break Markov-switching regression. Regime parameters are sampled via Gibbs, and regime paths via the forward–backward algorithm.
+- `forecast.py` performs multi-step inflation forecasting by projecting latent factors forward using the estimated AR(1) transition and computing regime-weighted inflation expectations. It also simulates forecast distributions (fan charts) and supports stochastic innovations.
 
 ---
 
@@ -66,6 +77,7 @@ See `requirements.txt`. The code runs on Python 3.8+ and uses:
 - `pandas`, `numpy`
 - `matplotlib`, `seaborn`
 - `scikit-learn`
+- `ruptures`
 - No proprietary packages
 
 ---

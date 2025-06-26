@@ -42,7 +42,7 @@ def forecast_inflation(
 
     alpha = post['alpha']
     beta = post['beta']
-    sigma2 = post['sigma2']          
+    sigma2 = post['sigma2']
 
     f = factor_df.loc[:cutoff].iloc[-1].values
     f = np.atleast_1d(f).flatten()
@@ -59,7 +59,7 @@ def forecast_inflation(
             shock = np.random.normal(loc=0, scale=np.sqrt(factor_var), size=f.shape)
         else:
             shock = 0
-        f = phi @ f + stoch
+        f = phi @ f + shock
 
         mu = alpha + beta @ f
         mu_bar = mu.mean()
